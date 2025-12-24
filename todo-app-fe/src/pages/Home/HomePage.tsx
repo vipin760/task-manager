@@ -9,11 +9,11 @@ function HomePage() {
     //  const [todoData, setTodoData] = useState([]);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [expandedId, _setExpandedId] = useState<string | null>(null);
-    const [formData, setFormData] = useState({ title: '', description: '', status: 'PENDING' as TodoStatus});
+    const [formData, setFormData] = useState({ title: '', description: '', status: 'PENDING' as TodoStatus });
     const [showForm, setShowForm] = useState<boolean | false>(false);
 
     // calling endpoint
-    const { todos,fetchTodos, addTodo, deleteTodoHook, updateTodoHook } = useTodo()
+    const { todos, loading, fetchTodos, addTodo, deleteTodoHook, updateTodoHook } = useTodo()
 
     const handleClose = (showForm: boolean) => {
         setShowForm(showForm)
@@ -25,8 +25,8 @@ function HomePage() {
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         try {
             e.preventDefault()
-            await addTodo(formData,todos.pagination)
-            setFormData({ title: '', description: '', status:'PENDING' })
+            await addTodo(formData, todos.pagination)
+            setFormData({ title: '', description: '', status: 'PENDING' })
         } catch (error) {
             console.log("<><>error", error)
         }
@@ -34,7 +34,7 @@ function HomePage() {
 
     const handleDelete = async (id: string) => {
         try {
-            const data = await deleteTodoHook(id,todos.pagination)
+            const data = await deleteTodoHook(id, todos.pagination)
             console.log("<><>deleted", data)
         } catch (error) {
             console.log("<><>error", error)
@@ -48,7 +48,7 @@ function HomePage() {
             setFormData({
                 title: data.title,
                 description: data.description || "",
-                status:data.status || 'PENDING'
+                status: data.status || 'PENDING'
             });
             setShowForm(true)
         } catch (error) {
@@ -60,8 +60,8 @@ function HomePage() {
         try {
             e.preventDefault()
             if (!editingId) return
-            await updateTodoHook(editingId, formData,todos.pagination)
-            setFormData({ title: '', description: '',status:'PENDING' })
+            await updateTodoHook(editingId, formData, todos.pagination)
+            setFormData({ title: '', description: '', status: 'PENDING' })
         } catch (error) {
             console.log(error)
         }
@@ -74,6 +74,12 @@ function HomePage() {
     return (
         <>
             <div className="min-h-screen bg-linear-to-br from-purple-900 via-indigo-900 to-blue-900 p-4 md:p-8">
+                {/* Loading Overlay */}
+                {loading && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                        <div className="w-20 h-20 border-4 border-t-purple-500 border-blue-500 border-solid rounded-full animate-spin"></div>
+                    </div>
+                )}
                 <div className="max-w-xl mx-auto">
                     {/* Header */}
                     <div className="text-center mb-1 relative">
